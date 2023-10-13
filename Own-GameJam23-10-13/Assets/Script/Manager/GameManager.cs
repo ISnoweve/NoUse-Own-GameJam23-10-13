@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,6 +15,9 @@ public class GameManager : MonoBehaviour
     public GameObject stageThreeSpawner;
     public GameObject stageSecretSpawner;
     public GameObject stumpSecretBackSpawner;
+
+    public TextMeshProUGUI secretTextBox;
+    public TextMeshProUGUI gameEnd;
     
 
     private void Awake()
@@ -22,6 +27,8 @@ public class GameManager : MonoBehaviour
 
     public void Start()
     {
+        secretTextBox.enabled = false;
+        gameEnd.enabled = false;
         stumpSecretBackSpawner.SetActive(false);
         ResetPlayerPostion();
     }
@@ -41,7 +48,7 @@ public class GameManager : MonoBehaviour
         
         if (Item == EItem.Cg)
         {
-            // 遊戲結束
+            gameEnd.enabled = true;
         }
         else if (Item == EItem.Dtwo)
         {
@@ -58,6 +65,8 @@ public class GameManager : MonoBehaviour
             Transform spawnScretPostion = stageSecretSpawner.transform;
             playerPosition.position = spawnScretPostion.position;
             
+            SecretAction();
+            
             stumpSecretBackSpawner.SetActive(true);
         }
 
@@ -65,13 +74,13 @@ public class GameManager : MonoBehaviour
         {
             Transform spawnBackPosition = stumpSecretBackSpawner.transform;
             playerPosition.position = spawnBackPosition.position;
-            
-            SecretAction();
+
+            secretTextBox.enabled = false;
         }
     }
 
     private void SecretAction()
     {
-        //UI顯示
+        secretTextBox.enabled = true;
     }
 }
