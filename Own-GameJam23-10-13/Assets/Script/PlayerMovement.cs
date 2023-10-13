@@ -6,7 +6,6 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D rigidbody;
-    [SerializeField] private BoxCollider2D boxCollider;
     private Camera camera;
     private Vector2 force;
     private Vector3 startPoint;
@@ -16,6 +15,8 @@ public class PlayerMovement : MonoBehaviour
     public Vector2 maxPower;
     public float shootPower = 10f;
     public float losePower = 1f;
+    public float losePowerPlus;
+    public bool isMoving;
 
     private void Awake()
     {
@@ -30,7 +31,6 @@ public class PlayerMovement : MonoBehaviour
     private void InitReference()
     {
         rigidbody = GetComponent<Rigidbody2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
     }
     
     private void OnMouseDown()
@@ -46,25 +46,79 @@ public class PlayerMovement : MonoBehaviour
 
         float forceX = Math.Clamp(startPoint.x - endPoint.x, mixPower.x, maxPower.x);
         float forceY = Math.Clamp(startPoint.y - endPoint.y, mixPower.y, maxPower.y);
-        Debug.Log(forceX);
-        Debug.Log(forceY);
         force = new Vector2(forceX, forceY);
-        
-        rigidbody.AddForce(force*shootPower,ForceMode2D.Force);
+
+        if (MoveDetect())
+        {
+            rigidbody.AddForce(force*shootPower,ForceMode2D.Force); 
+        }
+
+        PlayerMovementLine.Instance.EndLine();
     }
 
     private void Update()
     {
-        MoveDetect();
+        if (!MoveDetect())
+        {
+            rigidbody.velocity=LosingVelocity();
+        }
+        else
+        {
+            if (Input.GetMouseButton(0))
+            {
+                Vector3 currentPoint = camera.ScreenToWorldPoint(Input.mousePosition);
+                currentPoint.z = 15;
+                PlayerMovementLine.Instance.RenderLine(startPoint,currentPoint);
+            }
+        }
     }
 
-    private void MoveDetect()
+    private bool MoveDetect()
     {
-        if (rigidbody.velocity.x != 0 )
+        if (rigidbody.velocity.x == 0 && rigidbody.velocity.y == 0)
         {
-            Vector2 rigidbodyVelocity = rigidbody.velocity;
-            rigidbodyVelocity.x = 0;
-            rigidbodyVelocity.y -= Time.deltaTime * losePower;
+            isMoving = false;
+            return true;
         }
+        else
+        {
+            isMoving = true;
+            return false;
+        }
+    }
+
+    private Vector2 LosingVelocity()
+    {
+        Vector2 getVelocity = rigidbody.velocity;
+        
+        //有問題的彈射系統
+        
+        // if (getVelocity.x < 0)
+        // {
+        //     velocityX = Mathf.Abs(getVelocity.x) - (Time.deltaTime * losePower);
+        //     getVelocity.x = -velocityX;
+        // }
+        // else
+        // {
+        //     getVelocity.x = Mathf.Abs(getVelocity.x) - (Time.deltaTime * losePower);
+        // }
+        //
+        // if (getVelocity.y < 0)
+        // {
+        //     velocityY = Mathf.Abs(getVelocity.y) - (Time.deltaTime * losePower);
+        //     getVelocity.y = -velocityY;
+        // }
+        // else
+        // {
+        //     getVelocity.y = Mathf.Abs(getVelocity.y) - (Time.deltaTime * losePower);
+        // }
+
+        if (Mathf.Abs(getVelocity.x) <= 1 && Mathf.Abs(getVelocity.y) <= 1)
+        {
+            getVelocity.x = 0;
+            getVelocity.y = 0;
+        }
+
+        return getVelocity;
     }
 }
