@@ -11,6 +11,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 startPoint;
     private Vector3 endPoint;
 
+    public static PlayerMovement Instance;
+    public GameObject Own;
     public Vector2 mixPower;
     public Vector2 maxPower;
     public float shootPower = 10f;
@@ -20,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
         camera = Camera.main;
     }
 
@@ -122,5 +125,15 @@ public class PlayerMovement : MonoBehaviour
         }
 
         return getVelocity;
+    }
+
+    public void ResetVelocity()
+    {
+        Vector2 getVelocity = rigidbody.velocity;
+
+        getVelocity.x = 0;
+        getVelocity.y = 0;
+
+        rigidbody.velocity = getVelocity;
     }
 }
