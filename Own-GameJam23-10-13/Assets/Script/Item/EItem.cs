@@ -8,5 +8,6 @@ public enum EItem
     Cg,
     Nemo,
     Haga,
-    Lubee
+    Lubee,
+    Dtwo,
 }
