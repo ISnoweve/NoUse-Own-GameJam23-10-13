@@ -89,6 +89,8 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 LosingVelocity()
     {
+        // float velocityX;
+        // float velocityY;
         Vector2 getVelocity = rigidbody.velocity;
         
         //有問題的彈射系統
